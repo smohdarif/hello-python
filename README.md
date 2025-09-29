@@ -1,12 +1,129 @@
-# LaunchDarkly sample Python application
+# LaunchDarkly Python Demo Application
 
-We've built a simple console application that demonstrates how LaunchDarkly's SDK works.
+A comprehensive Python application demonstrating LaunchDarkly's SDK with both single-file and modular architectures. This project showcases feature flag evaluation, real-time monitoring, and follows all LaunchDarkly best practices.
 
-Below, you'll find the build procedure. For more comprehensive instructions, you can visit your [Quickstart page](https://app.launchdarkly.com/quickstart#/) or the [Python reference guide](https://docs.launchdarkly.com/sdk/server-side/python).
+## 🏗️ Project Structure
 
-This demo requires Python 3.9 or higher.
+This project provides **two implementations** of the same LaunchDarkly demo:
 
-## LaunchDarkly Flag Configuration
+### 📁 **Single-File Version** (Original)
+```
+hello-python/
+├── main.py                    # Single-file implementation
+├── .env                       # Environment variables
+└── requirements.txt           # Dependencies
+```
+
+### 📁 **Modular Version** (Refactored)
+```
+hello-python/
+├── main_refactored.py         # Entry point for modular version
+├── src/                       # Source package
+│   ├── config/               # Configuration management
+│   │   └── settings.py       # Environment & settings
+│   ├── services/             # LaunchDarkly service
+│   │   └── launchdarkly_service.py  # SDK wrapper
+│   ├── listeners/            # Event handling
+│   │   └── flag_listeners.py # Flag change listeners
+│   ├── utils/                # Utilities
+│   │   └── display.py        # Display & formatting
+│   └── main.py               # Application logic
+├── tests/                    # Unit tests
+│   └── test_launchdarkly_service.py
+├── .env                      # Environment variables
+└── requirements.txt          # Dependencies
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.9 or higher
+- LaunchDarkly account and SDK key
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/smohdarif/hello-python.git
+   cd hello-python
+   ```
+
+2. **Create virtual environment:**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment:**
+   ```bash
+   # Copy and edit the .env file
+   cp .env.example .env  # If available, or create .env manually
+   ```
+
+5. **Set up your .env file:**
+   ```env
+   # LaunchDarkly Configuration
+   LAUNCHDARKLY_SDK_KEY=your-sdk-key-here
+   LAUNCHDARKLY_FLAG_KEY=sample-feature
+   
+   # User Context Configuration (Optional)
+   LAUNCHDARKLY_USER_KEY=example-user-key
+   LAUNCHDARKLY_USER_NAME=Sandy
+   LAUNCHDARKLY_USER_KIND=user
+   
+   # Optional: Set to 'true' to run in CI mode
+   # CI=false
+   ```
+
+## 🎯 Running the Application
+
+### Option 1: Single-File Version (Original)
+```bash
+python main.py
+```
+
+### Option 2: Modular Version (Refactored)
+```bash
+python main_refactored.py
+```
+
+Both versions provide the same functionality but with different architectures.
+
+## 🧪 Running Tests
+
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run with verbose output
+python -m pytest tests/ -v
+
+# Run specific test file
+python -m pytest tests/test_launchdarkly_service.py
+```
+
+## 🏛️ Architecture Comparison
+
+### Single-File Version
+- ✅ **Simple**: All code in one file
+- ✅ **Easy to understand**: Linear flow
+- ✅ **Quick setup**: Minimal structure
+- ❌ **Hard to maintain**: Everything mixed together
+- ❌ **Not scalable**: Difficult to extend
+
+### Modular Version
+- ✅ **Maintainable**: Clear separation of concerns
+- ✅ **Testable**: Individual components can be tested
+- ✅ **Scalable**: Easy to add new features
+- ✅ **Professional**: Production-ready structure
+- ✅ **Follows best practices**: All 5 LaunchDarkly rules implemented
+
+## 📋 LaunchDarkly Flag Configuration
 
 Before running the application, you need to set up a feature flag in your LaunchDarkly dashboard.
 
@@ -51,21 +168,7 @@ The program creates a specific user context that will appear in your LaunchDarkl
 
 ### 5. Testing the Setup
 
-Once you've created the flag, you can test it by running:
-
-```bash
-# Activate virtual environment
-source venv/bin/activate
-
-# Set your SDK key (replace with your actual key)
-export LAUNCHDARKLY_SDK_KEY="your-actual-sdk-key-here"
-
-# Optionally set a custom flag key (or leave it to use 'sample-feature')
-export LAUNCHDARKLY_FLAG_KEY="sample-feature"
-
-# Run the program
-python main.py
-```
+Once you've created the flag, you can test it by running either version of the application.
 
 ### 6. Expected Behavior
 
@@ -81,64 +184,99 @@ While the program is running:
 3. Toggle it between `true` and `false`
 4. Watch the program output change in real-time
 
-## Setup Instructions
+## 🏆 LaunchDarkly Best Practices
 
-### Option 1: Using Environment File (Recommended)
+The modular version implements all 5 official LaunchDarkly Python SDK best practices:
 
-1. **Create a `.env` file** in the project root with your LaunchDarkly credentials:
-   ```bash
-   # Create .env file
-   touch .env
-   ```
+### ✅ Rule 1: Singleton Pattern
+- Uses `ldclient.set_config()` and `ldclient.get()`
+- Enforces singleton pattern as documented
+- No custom singleton implementation needed
 
-2. **Add your environment variables** to the `.env` file:
-   ```env
-   # LaunchDarkly Configuration
-   LAUNCHDARKLY_SDK_KEY=your-sdk-key-here
-   LAUNCHDARKLY_FLAG_KEY=sample-feature
-   
-   # Optional: Set to 'true' to run in CI mode (single evaluation)
-   # CI=false
-   ```
+### ✅ Rule 2: Environment-Aware Configuration
+- Uses `os.environ` for environment variables
+- Supports `HTTPS_PROXY` environment variable
+- Python idiomatic configuration methods
 
-3. **Install dependencies**:
-   ```bash
-   # Using pip (recommended)
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   
-   # Or using Poetry
-   poetry install
-   ```
+### ✅ Rule 3: Initialization Pattern
+- Uses the exact same initialization pattern
+- Includes timeout considerations
+- Proper singleton initialization
 
-4. **Run the application**:
-   ```bash
-   # Using pip
-   source venv/bin/activate
-   python main.py
-   
-   # Or using Poetry
-   poetry run python main.py
-   ```
+### ✅ Rule 4: Graceful Shutdown
+- Emphasizes graceful shutdown
+- Uses Python signal handlers
+- Proper flush and close patterns
 
-### Option 2: Using Environment Variables
+### ✅ Rule 5: Lightweight Configuration
+- Environment variable configuration
+- Relay proxy support
+- Logging configuration via environment variables
 
-1. Set the environment variable `LAUNCHDARKLY_SDK_KEY` to your LaunchDarkly SDK key. If there is an existing boolean feature flag in your LaunchDarkly project that you want to evaluate, set `LAUNCHDARKLY_FLAG_KEY` to the flag key; otherwise, a boolean flag of `sample-feature` will be assumed.
+## 🔧 Development
 
-    ```bash
-    export LAUNCHDARKLY_SDK_KEY="1234567890abcdef"
-    export LAUNCHDARKLY_FLAG_KEY="my-boolean-flag"
-    ```
+### Adding New Features
 
-2. Ensure you have [Poetry](https://python-poetry.org/) installed.
-3. Install the required dependencies with `poetry install`.
-4. On the command line, run `poetry run python main.py`
+The modular structure makes it easy to add new features:
 
-## Expected Output
+1. **Add new services** in `src/services/`
+2. **Add new utilities** in `src/utils/`
+3. **Add new listeners** in `src/listeners/`
+4. **Update configuration** in `src/config/`
 
-You should receive the message "The <flagKey> feature flag evaluates to <flagValue>.". The application will run continuously and react to the flag changes in LaunchDarkly.
+### Code Organization
 
-## Security Note
+- **Configuration**: `src/config/settings.py`
+- **LaunchDarkly Logic**: `src/services/launchdarkly_service.py`
+- **Display Logic**: `src/utils/display.py`
+- **Event Handling**: `src/listeners/flag_listeners.py`
+- **Main Application**: `src/main.py`
 
-The `.env` file is included in `.gitignore` to prevent accidentally committing sensitive credentials to version control. Always keep your LaunchDarkly SDK keys secure and never commit them to public repositories.
+## 📊 Features
+
+### Single-File Version
+- ✅ Basic flag evaluation
+- ✅ Real-time flag monitoring
+- ✅ Simple banner display
+- ✅ Environment variable support
+
+### Modular Version
+- ✅ All single-file features
+- ✅ Detailed flag evaluation with variation details
+- ✅ Enhanced error handling
+- ✅ Graceful shutdown with signal handling
+- ✅ Comprehensive logging
+- ✅ Unit tests
+- ✅ Professional architecture
+- ✅ Easy to extend and maintain
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+1. **SDK Key Error**: Make sure `LAUNCHDARKLY_SDK_KEY` is set in your `.env` file
+2. **Flag Not Found**: Ensure the flag key matches what you created in LaunchDarkly
+3. **Connection Issues**: Check your internet connection and proxy settings
+4. **Import Errors**: Make sure you're in the correct directory and virtual environment is activated
+
+### Debug Mode
+
+Set `CI=true` in your `.env` file to run in CI mode (single evaluation without real-time monitoring).
+
+## 📝 License
+
+This project is licensed under the Apache-2.0 License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📚 Additional Resources
+
+- [LaunchDarkly Quickstart](https://app.launchdarkly.com/quickstart#/)
+- [Python SDK Reference](https://docs.launchdarkly.com/sdk/server-side/python)
+- [Feature Flag Best Practices](https://docs.launchdarkly.com/guides/flags/testing-flags)
