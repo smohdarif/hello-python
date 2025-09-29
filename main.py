@@ -4,6 +4,11 @@ from ldclient import Context
 from ldclient.config import Config
 from threading import Event
 from halo import Halo
+import atexit
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Set sdk_key to your LaunchDarkly SDK key.
@@ -54,6 +59,14 @@ if __name__ == "__main__":
 
     ldclient.set_config(Config(sdk_key))
 
+    def _close_client_on_exit():
+        try:
+            ldclient.get().close()
+        except Exception:
+            pass
+
+    atexit.register(_close_client_on_exit)
+
     if not ldclient.get().is_initialized():
         print("*** SDK failed to initialize. Please check your internet connection and SDK credential for any typo.")
         exit()
@@ -77,4 +90,7 @@ if __name__ == "__main__":
             try:
                 Event().wait()
             except KeyboardInterrupt:
-                pass
+                try:
+                    ldclient.get().close()
+                except Exception:
+                    pass
