@@ -17,10 +17,18 @@ def build_demo_context():
     Returns:
         Context: Demo user context
     """
-    return Context.builder('example-user-key')\
+    logger.info("📍 FLOW [3/6]: context.build_demo_context() - Building demo user context")
+    logger.info("   ↳ User Key: 'example-user-key'")
+    logger.info("   ↳ User Name: 'Sandy'")
+    logger.info("   ↳ Kind: 'user'")
+    
+    context = Context.builder('example-user-key')\
         .kind('user')\
         .name('Sandy')\
         .build()
+    
+    logger.info("✓ Demo context built successfully")
+    return context
 
 
 def build_user_context(user_id, name=None, **attributes):
@@ -45,6 +53,13 @@ def build_user_context(user_id, name=None, **attributes):
             plan='premium'
         )
     """
+    logger.info(f"📍 FLOW [3/6]: context.build_user_context() - Building context for user: {user_id}")
+    logger.info(f"   ↳ User ID: '{user_id}'")
+    if name:
+        logger.info(f"   ↳ Name: '{name}'")
+    if attributes:
+        logger.info(f"   ↳ Attributes: {list(attributes.keys())}")
+    
     builder = Context.builder(user_id).kind('user')
     
     if name:
@@ -55,6 +70,6 @@ def build_user_context(user_id, name=None, **attributes):
         builder.set(key, value)
     
     context = builder.build()
-    logger.debug(f"Built user context for: {user_id}")
+    logger.info(f"✓ User context built successfully for: {user_id}")
     
     return context

@@ -25,23 +25,33 @@ def safe_variation(flag_key, context, default_value=False):
     Returns:
         Flag value or default
     """
+    logger.info(f"📍 FLOW [4/6]: evaluation.safe_variation() - Evaluating flag '{flag_key}'")
+    logger.info(f"   ↳ Flag Key: '{flag_key}'")
+    logger.info(f"   ↳ Context: {context.key}")
+    logger.info(f"   ↳ Default Value: {default_value}")
+    
     try:
         from .launchdarkly import get_ld_client, is_ld_ready
         
+        logger.debug("   ↳ Checking if LaunchDarkly is ready...")
         if not is_ld_ready():
-            logger.debug(f"LD not ready, using default for '{flag_key}'")
+            logger.warning(f"   ↳ LD not ready, using default value: {default_value}")
             return default_value
         
+        logger.debug("   ↳ Getting LD client...")
         client = get_ld_client()
         if not client:
+            logger.warning("   ↳ Client not available, using default value")
             return default_value
-            
+        
+        logger.debug("   ↳ Calling client.variation()...")
         value = client.variation(flag_key, context, default_value)
-        logger.debug(f"Flag '{flag_key}' evaluated to: {value}")
+        logger.info(f"✓ Flag '{flag_key}' evaluated to: {value}")
         return value
         
     except Exception as e:
-        logger.error(f"Flag evaluation failed for '{flag_key}': {e}")
+        logger.error(f"✗ Flag evaluation failed for '{flag_key}': {e}")
+        logger.warning(f"   ↳ Returning default value: {default_value}")
         return default_value
 
 

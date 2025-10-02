@@ -28,14 +28,17 @@ def get_sdk_key():
     Raises:
         ValueError: If SDK key is not set
     """
+    logger.info("📍 FLOW [1/6]: config.get_sdk_key() - Getting SDK key from environment")
     sdk_key = os.getenv('LAUNCHDARKLY_SDK_KEY')
     
     if not sdk_key:
+        logger.error("❌ SDK key not found in environment")
         raise ValueError(
             "LAUNCHDARKLY_SDK_KEY environment variable is required. "
             "Please set it in your .env file or environment."
         )
     
+    logger.info(f"✓ SDK key retrieved: {sdk_key[:10]}...{sdk_key[-4:]}")
     return sdk_key
 
 
@@ -49,6 +52,7 @@ def load_app_config():
     Returns:
         dict: Configuration dictionary with app settings
     """
+    logger.info("📍 FLOW [1/6]: config.load_app_config() - Loading application configuration")
     config = {
         # LaunchDarkly settings
         'sdk_key': os.getenv('LAUNCHDARKLY_SDK_KEY'),
@@ -64,6 +68,7 @@ def load_app_config():
         'read_timeout': float(os.getenv('LD_READ_TIMEOUT', '15.0')),
     }
     
+    logger.info(f"✓ Configuration loaded: flag_key='{config['flag_key']}', ci_mode={config['ci_mode']}")
     return config
 
 

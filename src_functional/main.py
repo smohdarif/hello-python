@@ -34,10 +34,18 @@ def run_basic_evaluation(flag_key, context):
         flag_key: Feature flag key
         context: User context
     """
+    logger.info("\n" + "─" * 70)
+    logger.info("STEP 4: FLAG EVALUATION (Basic)")
+    logger.info("─" * 70)
+    
     show_section_header("BASIC FLAG EVALUATION")
     
     # Safe evaluation - works even if LD not ready
     flag_value = safe_variation(flag_key, context, False)
+    
+    logger.info("\n" + "─" * 70)
+    logger.info("STEP 5: DISPLAY RESULT")
+    logger.info("─" * 70)
     show_basic_result(flag_key, flag_value)
 
 
@@ -64,15 +72,24 @@ def run_real_time_monitoring(flag_key, context):
         flag_key: Feature flag key
         context: User context
     """
+    logger.info("\n" + "─" * 70)
+    logger.info("STEP 6: REAL-TIME MONITORING (Listeners)")
+    logger.info("─" * 70)
+    
     show_section_header("REAL-TIME FLAG MONITORING")
     show_monitoring_info()
     
     # Add listener for flag changes
+    logger.info("   ↳ Adding flag change listener...")
     listener = add_flag_listener(flag_key, context, on_basic_flag_change)
     
     if not listener:
         print("⚠ Could not start monitoring (LD not ready)")
+        logger.warning("   ↳ Listener not added - LD not ready")
         return
+    
+    logger.info("✓ Listener added successfully")
+    logger.info("   ↳ Waiting for flag changes (toggle in LD dashboard)...")
     
     # Wait for changes
     with Halo(text='Waiting for changes', spinner='dots'):
@@ -80,6 +97,7 @@ def run_real_time_monitoring(flag_key, context):
             Event().wait()
         except KeyboardInterrupt:
             print("\n*** Shutting down gracefully...")
+            logger.info("\n🛑 Keyboard interrupt received - shutting down")
 
 
 def main():
@@ -92,6 +110,10 @@ def main():
     - Real-time monitoring
     - Graceful shutdown
     """
+    logger.info("=" * 70)
+    logger.info("🚀 STARTING: main_functional.py -> src_functional.main.main()")
+    logger.info("=" * 70)
+    
     print("\n" + "=" * 60)
     print("LaunchDarkly Python Demo - Function-Based Architecture")
     print("=" * 60)
@@ -99,6 +121,9 @@ def main():
     try:
         # Load and validate configuration
         print("\n*** Loading configuration...")
+        logger.info("\n" + "─" * 70)
+        logger.info("STEP 1: CONFIGURATION")
+        logger.info("─" * 70)
         config = load_app_config()
         validate_config(config)
         sdk_key = get_sdk_key()
@@ -109,6 +134,9 @@ def main():
         
         # Initialize LaunchDarkly (non-blocking)
         print("\n*** Initializing LaunchDarkly...")
+        logger.info("\n" + "─" * 70)
+        logger.info("STEP 2: INITIALIZATION")
+        logger.info("─" * 70)
         start_time = time.time()
         is_ready = init_ld_client(sdk_key, wait_seconds=5)
         elapsed = time.time() - start_time
@@ -118,6 +146,9 @@ def main():
         
         # Build user context (for demo, using simple context)
         # In real app: context = build_user_context(user.id, user.name, email=user.email)
+        logger.info("\n" + "─" * 70)
+        logger.info("STEP 3: CONTEXT BUILDING")
+        logger.info("─" * 70)
         context = build_demo_context()
         print(f"✓ Using demo context: example-user-key (Sandy)")
         

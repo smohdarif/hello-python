@@ -12,11 +12,20 @@ def show_basic_result(flag_key, value):
         flag_key: Flag key
         value: Flag value
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"📍 FLOW [5/6]: display.show_basic_result() - Displaying result")
+    logger.info(f"   ↳ Flag: '{flag_key}' = {value}")
+    
     print()
     print(f"*** The {flag_key} feature flag evaluates to {value}")
     
     if value:
+        logger.info("   ↳ Value is True, showing banner...")
         show_banner()
+    
+    logger.info("✓ Basic result displayed")
 
 
 def show_detailed_result(flag_key, detail):

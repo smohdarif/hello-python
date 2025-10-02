@@ -29,12 +29,19 @@ def init_ld_client(sdk_key, wait_seconds=5):
     Returns:
         bool: True if initialized, False otherwise
     """
+    logger.info("📍 FLOW [2/6]: launchdarkly.init_ld_client() - Initializing LaunchDarkly client")
+    logger.info(f"   ↳ Using SDK key: {sdk_key[:10]}...{sdk_key[-4:]}")
+    logger.info(f"   ↳ Wait timeout: {wait_seconds}s (NON-BLOCKING)")
+    
     try:
         # Create config and set it
+        logger.debug("   ↳ Creating Config object...")
         config = Config(sdk_key)
+        logger.debug("   ↳ Calling ldclient.set_config()...")
         ldclient.set_config(config)
         
         # Get client instance
+        logger.debug("   ↳ Getting client instance with ldclient.get()...")
         client = ldclient.get()
         
         # Wait briefly, but don't block forever
